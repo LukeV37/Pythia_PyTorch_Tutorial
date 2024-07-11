@@ -1,4 +1,5 @@
 #!/bin/bash
+WORK_DIR=$(pwd)
 cd Software
 pwd > Software_Path.txt
 
@@ -37,7 +38,16 @@ read -p "Please Respond [y|n]: " CHECK
 if [[ "$CHECK" == "y" ]]; then
     python3 -m venv pythia_tutorial
     source ./pythia_tutorial/bin/activate
+    pip install --upgrade pip
     pip install -r pip_requirements.txt
 fi
-cd ..
+echo "Would you like to setup a jupyter kernel for your virtual env?"
+echo "This is only needed if you want to run a jupyter notebook?"
+read -p "Please Respond [y|n]: " CHECK
+if [[ "$CHECK" == "y" ]]; then
+    ipython kernel install --user --name=pythia_tutorial
+    cd $WORK_DIR 
+    jupyter notebook
+fi
+cd $WORK_DIR
 echo "Setup Complete!"
