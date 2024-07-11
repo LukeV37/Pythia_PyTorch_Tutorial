@@ -1,5 +1,5 @@
-numpy==1.21.5
-torch==2.3.0
-matplotlib==3.5.1
-notebook==7.2.1
-ipykernel==6.29.5
+numpy
+torch
+matplotlib
+notebook
+ipykernel

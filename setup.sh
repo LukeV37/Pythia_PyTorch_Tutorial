@@ -17,6 +17,8 @@ echo "Would you like to compile pythia?"
 read -p "Please Respond [y|n]: " CHECK
 if [[ "$CHECK" == "y" ]]; then
     cd pythia8312
+    export CC=gcc
+    export CXX=g++
     ./configure --with-python-config=python3-config | tee config.log
     CHECK=$(cat config.log | awk 'END{print $3}')
 
