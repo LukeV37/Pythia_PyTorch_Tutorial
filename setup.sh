@@ -5,7 +5,7 @@ pwd > Software_Path.txt
 
 echo "Welcome to the Pythia8 setup script!"
 echo "\tAuthor: Luke Vaughan"
-echo "Would you like to download pythia? (Only for first-time setup)"
+echo "Would you like to download pythia source code? (Only for first-time setup)"
 read -p "Please Respond [y|n]: " CHECK
 if [[ "$CHECK" == "y" ]]; then
     curl -O https://www.pythia.org/download/pythia83/pythia8312.tgz
@@ -41,8 +41,7 @@ if [[ "$CHECK" == "y" ]]; then
     pip install --upgrade pip
     pip install -r pip_requirements.txt
 fi
-echo "Would you like to setup a jupyter kernel for your virtual env?"
-echo "This is only needed if you want to run a jupyter notebook?"
+echo "Would you like to run a jupyter notebook?"
 read -p "Please Respond [y|n]: " CHECK
 if [[ "$CHECK" == "y" ]]; then
     ipython kernel install --user --name=pythia_tutorial
