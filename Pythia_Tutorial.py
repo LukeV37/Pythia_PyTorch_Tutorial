@@ -175,10 +175,20 @@ def train(model, data, epochs=20):
 
 
 # Check if GPU is available, if not use cpu
-print("GPU Available: ", torch.cuda.is_available())
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-print(device)
+gpu_available = torch.cuda.is_available()
+mps_available = hasattr(torch, 'backends.mps.is_built') and torch.backends.mps.is_built()
 
+print("GPU Available on linux system:", gpu_available)
+print("Integrated GPU Available on Mac:", mps_available)
+
+if gpu_available:
+    device = torch.device("cuda:0")
+elif mps_available:
+    device = torch.device("mps")
+else:
+    device = torch.device("cpu")
+
+print(device)
 
 # Train Model and Plot Training History
 
