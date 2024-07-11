@@ -39,7 +39,7 @@ pythia_bkg.init()                              # Initialize object with user def
 
 # Generate Dataset
 # Generate events and append stable particles to a list. Then histogram pT, eta, and phi for signal vs background.
-num_events = 1000
+num_events = 100
 
 # Begin event loop. Generate event. Skip if error.
 stbl_sig = []
@@ -62,25 +62,31 @@ stbl_sig = np.array(stbl_sig[0:num_particles])       # Balance the dataset
 stbl_bkg = np.array(stbl_bkg[0:num_particles])       # Balance the dataset
 
 # Plot pT for signal and background
+plt.figure()
 plt.title("Particle p   $\mathregular{_{\tT}}$")
 plt.hist(stbl_sig[:,0],bins=40,range=(0,10),histtype='step',label='signal',color='r',density=True)
 plt.hist(stbl_bkg[:,0],bins=40,range=(0,10),histtype='step',label='background',color='b',density=True)
 plt.yscale('log')
 plt.legend()
+plt.savefig("trk_pt.pdf")
 plt.show()
 
 # Plot eta for signal and background
+plt.figure()
 plt.title("Particle \u03B7")
 plt.hist(stbl_sig[:,1],bins=30,range=(-10,10),histtype='step',label='signal',color='r',density=True)
 plt.hist(stbl_bkg[:,1],bins=30,range=(-10,10),histtype='step',label='background',color='b',density=True)
 plt.legend()
+plt.savefig("trk_eta.pdf")
 plt.show()
 
 # Plot phi for signal and background
+plt.figure()
 plt.title("Particle \u03D5")
 plt.hist(stbl_sig[:,2],bins=16,range=(-4,4),histtype='step',label='signal',color='r',density=True)
 plt.hist(stbl_bkg[:,2],bins=16,range=(-4,4),histtype='step',label='background',color='b',density=True)
 plt.legend()
+plt.savefig("trk_phi.pdf")
 plt.show()
 
 
@@ -162,7 +168,7 @@ def train(model, data, epochs=20):
         
         history['train_loss'].append(loss.detach().cpu().numpy())        # Append train loss to history (detach and convert to numpy array)
         history['test_loss'].append(test_loss.detach().cpu().numpy())    # Append test loss to history (detach and convert to numpy array)
-        if e%100==0:
+        if e%1==0:
             print('Epoch:',e,'\tTrain Loss:',round(float(loss),4),'\tTest Loss:',round(float(test_loss),4))
 
     return history
@@ -186,18 +192,20 @@ pytorch_total_params = sum(p.numel() for p in model.parameters() if p.requires_g
 print("Trainable Parameters: ", pytorch_total_params,"\n")
 
 # Declare optimizer and loss function
-optimizer = optim.Adam(model.parameters(), lr=0.0001)  # Adam = Adaptive Moment Estimation, lr = learning rate
+optimizer = optim.Adam(model.parameters(), lr=0.001)  # Adam = Adaptive Moment Estimation, lr = learning rate
 loss_fn = nn.BCELoss()                                 # BCE = Binary Cross Entropy, used for binary classification
 
 #Train Model
 data = X_train.to(device), Y_train.to(device), X_test.to(device), Y_test.to(device)   # Send data to device (cpu or gpu)
-history = train(model, data, epochs=1000)                                             # Train the model!
+history = train(model, data, epochs=100)                                             # Train the model!
 
 # Plot Training History
+plt.figure()
 plt.plot(history['train_loss'],label='train')
 plt.plot(history['test_loss'],label='test')
 plt.title("Loss")
 plt.legend()
+plt.savefig("History.pdf")
 plt.show()
 
 # Define traditional ROC curve
@@ -232,15 +240,18 @@ sig = np.where(Y_test==1)[0]
 bkg = np.where(Y_test==0)[0]
 
 # Plot Model Predictions split by sig and bkg
+plt.figure()
 plt.title("Predicted Output by Truth Label")
 plt.hist(y_pred[sig],histtype='step',label='ttbar',color='r')
 plt.axvline(x = np.mean(y_pred[sig]), color="r", linestyle="--", label="Sig Mean")
 plt.hist(y_pred[bkg],histtype='step',label='QCD',color='b')
 plt.axvline(x = np.mean(y_pred[bkg]), color="b", linestyle="--", label="Bkg Mean")
 plt.legend()
+plt.savefig("Predicted_Output.pdf")
 plt.show()
 
 # Plot Tradiation ROC Curve
+plt.figure()
 eff_sig, eff_bkg = roc(y_pred,Y_test.detach().cpu().numpy())
 plt.title("ROC Curve")
 plt.plot(eff_sig,eff_bkg,color='b',label="Trained Model")
@@ -248,9 +259,11 @@ plt.plot([1,0],'--',color='k',label="Random Model")
 plt.xlabel("Signal Efficiency")
 plt.ylabel("Background Efficiency")
 plt.legend()
+plt.savefig("ROC.pdf")
 plt.show()
 
 # Plot ATLAS Style ROC Curve
+plt.figure()
 eff_sig, eff_bkg = ATLAS_roc(y_pred,Y_test.detach().cpu().numpy())
 plt.title("ATLAS ROC Curve")
 plt.plot(eff_sig,eff_bkg,color='b',label="Trained Model")
@@ -259,4 +272,5 @@ plt.ylabel("Background Rejection")
 plt.yscale('log')
 plt.grid(True,which='both')
 plt.xlim([0.6, 1])
+plt.savefig("ATLAS_ROC.pdf")
 plt.show()
