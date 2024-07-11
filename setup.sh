@@ -46,7 +46,7 @@ fi
 echo "Would you like to run a jupyter notebook?"
 read -p "Please Respond [y|n]: " CHECK
 if [[ "$CHECK" == "y" ]]; then
-    ipython kernel install --user --name=pythia_tutorial
+    ipython3 kernel install --user --name=pythia_tutorial
     cd $WORK_DIR 
     jupyter notebook
 fi
