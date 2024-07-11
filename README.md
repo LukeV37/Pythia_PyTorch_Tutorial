@@ -5,7 +5,7 @@ To setup the code run:
 ```
 git clone https://github.com/LukeV37/Pythia_PyTorch_Tutorial.git
 cd Pythia_PyTorch_Tutorial
-source setup.sh
+./setup.sh
 ```
 The setup script will ask you a few questions: <br>
 <ol>
