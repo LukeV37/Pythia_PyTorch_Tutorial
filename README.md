@@ -1,5 +1,5 @@
-# Pythia + PyTorch Tutorial
-This tutorial will go step-by-step on how to setup pythia8 in python3. Pythia will be used to generate a ttbar and HardQCD dataset. A simple PyTorch model is then trained to distinguish particles coming from ttbar vs QCD. <br>
+# Pythia8 + Python3 + PyTorch2 Tutorial
+This tutorial will go step-by-step on how to setup Pythia8 in Python3. Pythia will be used to generate a ttbar and HardQCD dataset. A simple PyTorch model is then trained to distinguish particles coming from ttbar vs QCD. <br>
 <br>
 To automate the setup, run the code:
 ```
