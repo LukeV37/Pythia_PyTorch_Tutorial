@@ -23,7 +23,7 @@ source virt_env.sh
 The setup script will ask you a few questions: <br>
 <ol>
 <li>Would you like to download pythia source code? (Required for first time install)</li>
-<li>Would you compile pythia? (Required for first time install)</li>
+<li>Would you like to compile pythia? (Required for first time install)</li>
 <li>Would you like to setup python virtual env? (Required for first time install)</li>
 <li>Would you like to run a jupyter notebook? (Optional)</li>
 </ol>
