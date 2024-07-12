@@ -4,7 +4,7 @@ cd Software
 pwd > Software_Path.txt
 
 echo "Welcome to the Pythia8 setup script!"
-echo "\tAuthor: Luke Vaughan"
+###            Author: Luke Vaughan        ###
 echo "Would you like to download pythia source code? (Only for first-time setup)"
 read -p "Please Respond [y|n]: " CHECK
 if [[ "$CHECK" == "y" ]]; then
