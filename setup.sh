@@ -39,9 +39,15 @@ echo "Would you like to setup python virtual env?"
 read -p "Please Respond [y|n]: " CHECK
 if [[ "$CHECK" == "y" ]]; then
     python3 -m venv pythia_tutorial
-    source ./pythia_tutorial/bin/activate
-    pip install --upgrade pip
-    pip install -r pip_requirements.txt
+    if test -f ./pythia_tutorial/bin/activate; then
+        echo "File exists."
+        source ./pythia_tutorial/bin/activate
+        pip install --upgrade pip
+        pip install -r pip_requirements.txt
+    else
+        echo "Virtual Environment could not be created..."
+    fi
+
 fi
 echo "Would you like to run a jupyter notebook?"
 read -p "Please Respond [y|n]: " CHECK
