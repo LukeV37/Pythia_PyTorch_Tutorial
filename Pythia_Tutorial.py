@@ -219,28 +219,30 @@ plt.savefig("History.pdf")
 plt.show()
 
 # Define traditional ROC curve
-def roc(y_pred,y_true):    
+def roc(y_pred,y_true):
     sig_eff = []
     bkg_eff = []
-    
+
     # Iterate over thresholds and calculate sig and bkg efficiency
     for threshold in np.linspace(0,1,50):
-        sig_eff.append(((y_pred[sig] > threshold).sum() / y_true[sig].shape[0]))   # Sum over sig predictions > threshold and divide by total number of true sig instances 
-        bkg_eff.append(((y_pred[bkg] < threshold).sum()  / y_true[bkg].shape[0]))  # Sum over bkg predictions < threshold and divide by total number of true bkg instances 
-        
+        sig_eff.append(((y_pred[sig] > threshold).sum() / y_true[sig].shape[0]))   # Sum over sig predictions > threshold and divide by total number of true sig instances
+        bkg_eff.append(((y_pred[bkg] < threshold).sum()  / y_true[bkg].shape[0]))  # Sum over bkg predictions < threshold and divide by total number of true bkg instances
+
     return sig_eff, bkg_eff
 
 # Define ATLAS Style ROC curve
 def ATLAS_roc(y_pred,y_true):
     sig_eff = []
     bkg_eff = []
-    
-    for threshold in np.linspace(0,0.55,50):
+    thresholds = []
+
+    for threshold in np.linspace(0,0.95,50):
         sig_eff.append(((y_pred[sig] > threshold).sum() / y_true[sig].shape[0]))
         bkg_eff.append(1-((y_pred[bkg] < threshold).sum()  / y_true[bkg].shape[0]))
-        
+        thresholds.append(threshold)
+
     bkg_rej = [1/x for x in bkg_eff]  # ATLAS inverts bkg eff and uses bkg rejection instead
-    return sig_eff, bkg_rej
+    return np.array(sig_eff), np.array(bkg_rej), np.array(thresholds)
 
 # Get Models predictions
 y_pred = model(X_test.to(device)).detach().cpu().numpy()
@@ -249,21 +251,10 @@ y_pred = model(X_test.to(device)).detach().cpu().numpy()
 sig = np.where(Y_test==1)[0]
 bkg = np.where(Y_test==0)[0]
 
-# Plot Model Predictions split by sig and bkg
-plt.figure()
-plt.title("Predicted Output by Truth Label")
-plt.hist(y_pred[sig],histtype='step',label='ttbar',color='r')
-plt.axvline(x = np.mean(y_pred[sig]), color="r", linestyle="--", label="Sig Mean")
-plt.hist(y_pred[bkg],histtype='step',label='QCD',color='b')
-plt.axvline(x = np.mean(y_pred[bkg]), color="b", linestyle="--", label="Bkg Mean")
-plt.legend()
-plt.savefig("Predicted_Output.pdf")
-plt.show()
-
 # Plot Tradiation ROC Curve
 plt.figure()
 eff_sig, eff_bkg = roc(y_pred,Y_test.detach().cpu().numpy())
-plt.title("ROC Curve")
+plt.title("Classic ROC Curve")
 plt.plot(eff_sig,eff_bkg,color='b',label="Trained Model")
 plt.plot([1,0],'--',color='k',label="Random Model")
 plt.xlabel("Signal Efficiency")
@@ -272,15 +263,39 @@ plt.legend()
 plt.savefig("ROC.pdf")
 plt.show()
 
+eff_sig, eff_bkg, cut = ATLAS_roc(y_pred,Y_test.detach().cpu().numpy())
+# 10% WP
+idx = max(np.where(eff_sig>0.1)[0])
+cut1 = cut[idx]
+# 30% WP
+idx = max(np.where(eff_sig>0.3)[0])
+cut2 = cut[idx]
+# 50% WP
+idx = max(np.where(eff_sig>0.50)[0])
+cut3 = cut[idx]
+
+# Plot Model Predictions split by sig and bkg
+plt.figure()
+plt.title("Predicted Output by Truth Label")
+plt.hist(y_pred[sig],histtype='step',label='ttbar',color='r',bins=45)
+plt.hist(y_pred[bkg],histtype='step',label='QCD',color='b',bins=45)
+plt.axvline(x = cut1, color="r", linestyle="--", label="10% Sig Eff")
+plt.axvline(x = cut2, color="g", linestyle="--", label="30% Sig Eff")
+plt.axvline(x = cut3, color="b", linestyle="--", label="50% Sig Eff")
+plt.legend()
+plt.xlabel("Tagger Score")
+plt.ylabel("Number of Particles")
+plt.savefig("Predicted_Output.pdf")
+plt.show()
+
 # Plot ATLAS Style ROC Curve
 plt.figure()
-eff_sig, eff_bkg = ATLAS_roc(y_pred,Y_test.detach().cpu().numpy())
 plt.title("ATLAS ROC Curve")
 plt.plot(eff_sig,eff_bkg,color='b',label="Trained Model")
 plt.xlabel("Signal Efficiency")
 plt.ylabel("Background Rejection")
 plt.yscale('log')
 plt.grid(True,which='both')
-plt.xlim([0.6, 1])
+plt.xlim([0, 1])
 plt.savefig("ATLAS_ROC.pdf")
 plt.show()
